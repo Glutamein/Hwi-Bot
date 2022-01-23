@@ -11,7 +11,7 @@ import asyncio
 from itertools import cycle
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = 'ODQ4MTAyMjM1NDM0NTE2NTEw.YLHuwQ.STCbj1WrvDIrKAgtRGwVDNedFww'
 GUILD = os.getenv('DISCORD_GUILD')
 
 client = commands.Bot(command_prefix='%')
@@ -20,18 +20,8 @@ client = commands.Bot(command_prefix='%')
 async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=discord.Game('%help'))
     for guild in client.guilds:
-        if guild.name == GUILD:
-            break
+        print(f'{guild.name} (id: {guild.id})')
     
-    members = '\n - '.join([member.name for member in guild.members])
-    print(
-        f'{client.user} is connected to the followind guild(s):\n'
-        f'{guild.name} (id: {guild.id})'
-    )
-    
-    print(f'Guild Members:\n - {members}')
-
-
 @client.command(help='Shows the latency ( how slow stuff is ) between u and amu\'s laptop')
 async def ping(ctx):
     await ctx.send(f'pong \n{round(client.latency*1000)} ms')
@@ -74,7 +64,7 @@ async def ctof_error(ctx, error):
         await ctx.send('please include the value you want converted folling the command. EX: %cotf 32')       
         
 #send some nice words to a fellow member
-#is broken FIX ME
+
 @client.command(help='say something nice to a fellow friend', aliases=['benice'])
 async def compliment(ctx, user):
     nice_phrases=[', ur doing amazing', '- keep up the good work!', 'I CODED THIS 4 U', ' love u m8 no homo bro', 'u r actually the best', 'u are actually a blessing to this earth and the greatest to happen to creation since pockets', 'ur pretty neat']
@@ -96,12 +86,6 @@ async def sf9pic(ctx):
 async def pentapic(ctx):
     await ctx.send(file=discord.File("./pentagon\\" + random.choice(os.listdir("./pentagon"))))
     
-
-@client.command(help='IGNORE ME IM FOR TESTING SOSORRY IF I FORGET TO DELETE')
-async def ksm(ctx):
-    skz=['BANG CHAN', 'LEE MINHO', 'SEO CHANGBIN', 'HWANG HYUNJIN', 'HAN JISUNG', 'LEE FELIX', 'KIM SEUNGMIN', 'YANG JEONGIN']
-    random.shuffle(skz)
-    await ctx.send(skz[1])
 
 @client.event
 async def on_command_error(ctx, error):
