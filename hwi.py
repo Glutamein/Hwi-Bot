@@ -11,7 +11,7 @@ import asyncio
 from itertools import cycle
 
 load_dotenv()
-TOKEN = 'ODQ4MTAyMjM1NDM0NTE2NTEw.YLHuwQ.STCbj1WrvDIrKAgtRGwVDNedFww'
+
 GUILD = os.getenv('DISCORD_GUILD')
 
 client = commands.Bot(command_prefix='%')
@@ -85,6 +85,14 @@ async def sf9pic(ctx):
 @client.command(help='sends pictures of rando pentagon kiddos')
 async def pentapic(ctx):
     await ctx.send(file=discord.File("./pentagon\\" + random.choice(os.listdir("./pentagon"))))
+
+@client.command(help='sends pictures of LISU')
+async def lisupic(ctx):
+    await ctx.send(file=discord.File("./lisu\\" + random.choice(os.listdir("./lisu"))))
+
+@client.command(help='sends pictures of rando pentagon kiddos')
+async def bunpic(ctx):
+    await ctx.send(file=discord.File("./bunny\\" + random.choice(os.listdir("./bunny"))))
     
 
 @client.event
