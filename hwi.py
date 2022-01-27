@@ -1,6 +1,7 @@
 # bot.py
 from ast import alias
-import os, random, glob
+import os
+import random, glob
 import discord
 from discord.enums import Status
 from dotenv import load_dotenv
@@ -12,7 +13,7 @@ from itertools import cycle
 
 load_dotenv()
 
-GUILD = os.getenv('DISCORD_GUILD')
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 client = commands.Bot(command_prefix='%')
 
@@ -99,9 +100,8 @@ async def bunpic(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send('please include all required arguments')
-    else:    
         await ctx.send('please type a valid command. Use %help to see all commands')
         print(error)
         
-
+print(f"{TOKEN}")
 client.run(TOKEN)
