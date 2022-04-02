@@ -7,6 +7,7 @@ from discord.enums import Status
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
+from platform import python_version
 
 import asyncio
 from itertools import cycle
@@ -39,8 +40,13 @@ async def comp_error(ctx, error):
         await ctx.send('please include two values in the format of: value1 value2')
 
     
+#version
+@client.command(help='shows version')
+async def ver(ctx):
+    await ctx.send(f"current Python version, {python_version()}")
+
+
 #temp conversions    
-    
 @client.command(help='convert c to f', aliases=['CTOF', 'CtoF', 'cTOf'])
 async def ftoc(ctx, temp):
     arg=int(temp)
@@ -68,7 +74,7 @@ async def ctof_error(ctx, error):
 
 @client.command(help='say something nice to a fellow friend', aliases=['benice'])
 async def compliment(ctx, user):
-    nice_phrases=[', ur doing amazing', '- keep up the good work!', 'I CODED THIS 4 U', ' love u m8 no homo bro', 'u r actually the best', 'u are actually a blessing to this earth and the greatest to happen to creation since pockets', 'ur pretty neat']
+    nice_phrases=[', ur doing amazing', '- keep up the good work!', 'I CODED THIS 4 U', ' love u m8 no homo bro (ok but all the homo tho)', 'u r actually the best', 'u are actually a blessing to this earth and the greatest to happen to creation since pockets', 'ur pretty neat']
     random.shuffle(nice_phrases)
     await ctx.send(f"{user} {nice_phrases[0]}")
 
@@ -99,9 +105,17 @@ async def bunpic(ctx):
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send('please include all required arguments')
-        await ctx.send('please type a valid command. Use %help to see all commands')
-        print(error)
+        await ctx.send(f'{error} please include all required arguments')
+        await ctx.send('please type a valid command. Use **%help** to see all commands')
+    elif isinstance(error, commands.BotMissingRole):
+        await ctx.send(f'{error} Bot does not have valid roles assigned')
+    elif isinstance(error, commands.BotMissingPermissions):
+        await ctx.send(f'{error} Invalid permissions. Please elevate permission and try again')
+    elif isinstance(error, commands.CommandNotFound):
+        await ctx.send(f'Not a valid command - {error}. Use the **%help** command to see all valid commands')
+       
+    
+
         
 print(f"{TOKEN}")
 client.run(TOKEN)
