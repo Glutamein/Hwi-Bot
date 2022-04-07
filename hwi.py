@@ -93,11 +93,11 @@ async def sf9pic(ctx):
 async def pentapic(ctx):
     await ctx.send(file=discord.File("./pentagon\\" + random.choice(os.listdir("./pentagon"))))
 
-@client.command(help='sends pictures of LISU')
-async def lisupic(ctx):
-    await ctx.send(file=discord.File("./lisu\\" + random.choice(os.listdir("./lisu"))))
+# @client.command(help='sends pictures of LISU')
+# async def lisupic(ctx):
+#     await ctx.send(file=discord.File("./lisu\\" + random.choice(os.listdir("./lisu"))))
 
-@client.command(help='sends pictures of rando pentagon kiddos')
+@client.command(help='sends pictures of random rabbit friend')
 async def bunpic(ctx):
     await ctx.send(file=discord.File("./bunny\\" + random.choice(os.listdir("./bunny"))))
     
