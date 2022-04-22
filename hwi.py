@@ -18,6 +18,8 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 client = commands.Bot(command_prefix='%')
 
+target_channel_id = 836002214697893958
+
 @client.event
 async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=discord.Game('%help'))
@@ -101,6 +103,17 @@ async def pentapic(ctx):
 async def bunpic(ctx):
     await ctx.send(file=discord.File("./bunny\\" + random.choice(os.listdir("./bunny"))))
     
+#sends daily pictures of skz
+@tasks.loop(hours=24)
+async def daily():
+    channel = client.get_channel(target_channel_id)
+    await channel.send(file=discord.File("./skz\\" + random.choice(os.listdir("./skz"))))
+
+@daily.before_loop
+async def before():
+    await client.wait_until_ready()
+    print("Finished waiting")
+
 
 @client.event
 async def on_command_error(ctx, error):
@@ -115,7 +128,6 @@ async def on_command_error(ctx, error):
         await ctx.send(f'Not a valid command - {error}. Use the **%help** command to see all valid commands')
        
     
-
-        
+daily.start()
 print(f"{TOKEN}")
 client.run(TOKEN)
