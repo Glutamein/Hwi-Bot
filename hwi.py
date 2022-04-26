@@ -18,7 +18,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 client = commands.Bot(command_prefix='%')
 
-target_channel_id = 836002214697893958
+target_channel_id = os.getenv("CHANNEL")
 
 @client.event
 async def on_ready():
