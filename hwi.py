@@ -95,16 +95,13 @@ async def sf9pic(ctx):
 async def pentapic(ctx):
     await ctx.send(file=discord.File("./pentagon\\" + random.choice(os.listdir("./pentagon"))))
 
-# @client.command(help='sends pictures of LISU')
-# async def lisupic(ctx):
-#     await ctx.send(file=discord.File("./lisu\\" + random.choice(os.listdir("./lisu"))))
 
 @client.command(help='sends pictures of random rabbit friend')
 async def bunpic(ctx):
     await ctx.send(file=discord.File("./bunny\\" + random.choice(os.listdir("./bunny"))))
     
 #sends daily pictures of skz
-@tasks.loop(hours=24)
+@tasks.loop(hours=12)
 async def daily():
     channel = client.get_channel(target_channel_id)
     await channel.send(file=discord.File("./skz\\" + random.choice(os.listdir("./skz"))))
@@ -122,10 +119,13 @@ async def on_command_error(ctx, error):
         await ctx.send('please type a valid command. Use **%help** to see all commands')
     elif isinstance(error, commands.BotMissingRole):
         await ctx.send(f'{error} Bot does not have valid roles assigned')
-    elif isinstance(error, commands.BotMissingPermissions):
+    elif isinstance(error, commands.BotMissingPermissions | commands.MissingPermissions | commands.CommandInvokeError):
         await ctx.send(f'{error} Invalid permissions. Please elevate permission and try again')
     elif isinstance(error, commands.CommandNotFound):
         await ctx.send(f'Not a valid command - {error}. Use the **%help** command to see all valid commands')
+    elif isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(f'{error} Please wait {error.retry_after:.2f} seconds before trying again')
+    
        
     
 daily.start()
