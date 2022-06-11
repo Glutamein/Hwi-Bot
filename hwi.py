@@ -8,18 +8,35 @@ from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from platform import python_version
-
-import asyncio
+from datetime import datetime, date, time, timedelta
+import tweepy as tw
 from itertools import cycle
+
+import pytz
+
+utc=pytz.UTC
 
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
+# Twitter API authentication
+TWT_KEY = os.getenv("TWITTER_API_KEY")
+TWT_SEC = os.getenv("TWITTER_API_SECRET")
+ACC_TOK = os.getenv("ACCESS_TOKEN")
+ACC_SEC = os.getenv("ACCESS_TOKEN_SECRET")
+  
+auth = tw.OAuthHandler(TWT_KEY, TWT_SEC)
+auth.set_access_token(ACC_TOK, ACC_SEC)
+
+api = tw.API(auth, wait_on_rate_limit=True)
+
+#bot prefix command
 client = commands.Bot(command_prefix='%')
 
 target_channel_id = 836002214697893958
-
+other_channel_id = 985026869374099456
+ 
 @client.event
 async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=discord.Game('%help'))
@@ -30,6 +47,7 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send(f'pong \n{round(client.latency*1000)} ms')
     
+
 #compability command
 @client.command(aliases=['comp', 'COMP', 'compare', 'COMPARE', 'COMPATIBILITY'], help='Compares two values compability level on a scale of 1-420')
 async def compatibility(ctx, arg, arg2):
@@ -42,19 +60,12 @@ async def comp_error(ctx, error):
         await ctx.send('please include two values in the format of: value1 value2')
 
     
-#version
-@client.command(help='shows version')
-async def ver(ctx):
-    await ctx.send(f"current Python version, {python_version()}")
-
-
 #temp conversions    
 @client.command(help='convert c to f', aliases=['CTOF', 'CtoF', 'cTOf'])
 async def ftoc(ctx, temp):
     arg=int(temp)
     c = round(((arg - 32) * 5/9), 2)
     await ctx.send(f"{arg} Fahrenheit is {c} Celsius")
-    
     
 @client.command(help='convert f to c', aliases=['FTOC', 'FtoC', 'fTOc'])
 async def ctof(ctx, temp):
@@ -71,36 +82,73 @@ async def ftoc_error(ctx, error):
 async def ctof_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send('please include the value you want converted folling the command. EX: %cotf 32')       
-        
-#send some nice words to a fellow member
 
+
+#send some nice words to a fellow member
 @client.command(help='say something nice to a fellow friend', aliases=['benice'])
 async def compliment(ctx, user):
-    nice_phrases=[', ur doing amazing', '- keep up the good work!', 'I CODED THIS 4 U', ' love u m8 no homo bro (ok but all the homo tho)', 'u r actually the best', 'u are actually a blessing to this earth and the greatest to happen to creation since pockets', 'ur pretty neat']
+    nice_phrases=[', ur doing amazing', '😊💕❤😍😎😉💋🌹🎉😘', '- keep up the good work!', 'I CODED THIS 4 U', ' love u m8 no homo bro (ok but all the homo tho)', 'u r actually the best', 'u are actually a blessing to this earth and the greatest to happen to creation since pockets', 'ur pretty neat', 'ur sexy keep it up']
     random.shuffle(nice_phrases)
     await ctx.send(f"{user} {nice_phrases[0]}")
 
+#image sending commands
+#windows syntax for files is: "./foldername\\" + random.choise(os.listdir("./foldername"))
+#linux syntax is "foldername" + random.choise(os.listdir("\foldername"))
 
 @client.command(help='sends pictures of rando skz kiddos')
 async def skzpic(ctx):
     await ctx.send(file=discord.File("./skz\\" + random.choice(os.listdir("./skz"))))
     
-
 @client.command(help='sends pictures of rando sf9 kiddos')
 async def sf9pic(ctx):
     await ctx.send(file=discord.File("./sf9\\" + random.choice(os.listdir("./sf9"))))
-    
     
 @client.command(help='sends pictures of rando pentagon kiddos')
 async def pentapic(ctx):
     await ctx.send(file=discord.File("./pentagon\\" + random.choice(os.listdir("./pentagon"))))
 
-
 @client.command(help='sends pictures of random rabbit friend')
 async def bunpic(ctx):
     await ctx.send(file=discord.File("./bunny\\" + random.choice(os.listdir("./bunny"))))
-    
-#sends daily pictures of skz
+
+latest_twt = ''
+
+#twt shit
+@tasks.loop(seconds=30)
+async def mirage_update():
+    global latest_twt
+    channel = client.get_channel(other_channel_id)
+    user='mirageau'
+
+    tweets = api.user_timeline(screen_name=user, count=1, tweet_mode='extended')
+
+    if latest_twt == '':
+        print('1')
+        latest_twt = tweets[0].full_text
+
+        # print(tweets[0])
+        for tweet in tweets:
+            print(tweet.full_text)
+
+        await channel.send(f"latest update: {tweets[0].full_text}")
+        return ''
+    else:
+        print('ur mom')
+        for tweet in tweets:
+            print(tweet.full_text)
+        print('')
+        print(f'latest tweet is {latest_twt} and the new tweet is {tweets[0].full_text}')
+        if tweets[0].full_text == latest_twt:
+            return ''
+        else:
+            print('nooot nooooot')
+            latest_twt = tweets[0].full_text
+            await channel.send(f"newest update: {tweets[0].full_text}")
+
+
+           
+
+#sends interval pictures of skz to specified channel
 @tasks.loop(hours=12)
 async def daily():
     channel = client.get_channel(target_channel_id)
@@ -109,9 +157,12 @@ async def daily():
 @daily.before_loop
 async def before():
     await client.wait_until_ready()
-    print("Finished waiting")
 
+@mirage_update.before_loop
+async def before():
+    await client.wait_until_ready()
 
+#error handling
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -126,8 +177,8 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f'{error} Please wait {error.retry_after:.2f} seconds before trying again')
     
-       
     
 daily.start()
+mirage_update.start()
 print(f"{TOKEN}")
 client.run(TOKEN)
