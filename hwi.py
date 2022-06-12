@@ -7,14 +7,8 @@ from discord.enums import Status
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
-from platform import python_version
-from datetime import datetime, date, time, timedelta
 import tweepy as tw
 from itertools import cycle
-
-import pytz
-
-utc=pytz.UTC
 
 load_dotenv()
 
@@ -113,7 +107,7 @@ async def bunpic(ctx):
 
 latest_twt = ''
 
-#twt shit
+#twt mirage update
 @tasks.loop(seconds=30)
 async def mirage_update():
     global latest_twt
@@ -123,29 +117,16 @@ async def mirage_update():
     tweets = api.user_timeline(screen_name=user, count=1, tweet_mode='extended')
 
     if latest_twt == '':
-        print('1')
         latest_twt = tweets[0].full_text
-
-        # print(tweets[0])
-        for tweet in tweets:
-            print(tweet.full_text)
-
         await channel.send(f"latest update: {tweets[0].full_text}")
         return ''
-    else:
-        print('ur mom')
-        for tweet in tweets:
-            print(tweet.full_text)
-        print('')
-        print(f'latest tweet is {latest_twt} and the new tweet is {tweets[0].full_text}')
+    else:  
         if tweets[0].full_text == latest_twt:
             return ''
         else:
-            print('nooot nooooot')
+            print(f'latest tweet is {latest_twt} and the new tweet is {tweets[0].full_text}')
             latest_twt = tweets[0].full_text
             await channel.send(f"newest update: {tweets[0].full_text}")
-
-
            
 
 #sends interval pictures of skz to specified channel
@@ -157,7 +138,7 @@ async def daily():
 @daily.before_loop
 async def before():
     await client.wait_until_ready()
-
+#
 @mirage_update.before_loop
 async def before():
     await client.wait_until_ready()
@@ -180,5 +161,4 @@ async def on_command_error(ctx, error):
     
 daily.start()
 mirage_update.start()
-print(f"{TOKEN}")
 client.run(TOKEN)
