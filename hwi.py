@@ -113,7 +113,6 @@ async def mirage_update():
     global latest_twt
     channel = client.get_channel(other_channel_id)
     user='mirageau'
-
     tweets = api.user_timeline(screen_name=user, count=1, tweet_mode='extended')
 
     if latest_twt == '':
@@ -157,8 +156,7 @@ async def on_command_error(ctx, error):
         await ctx.send(f'Not a valid command - {error}. Use the **%help** command to see all valid commands')
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f'{error} Please wait {error.retry_after:.2f} seconds before trying again')
-    
-    
+       
 daily.start()
 mirage_update.start()
 client.run(TOKEN)
