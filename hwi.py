@@ -30,6 +30,7 @@ client = commands.Bot(command_prefix='%')
 
 target_channel_id = 836002214697893958
 other_channel_id = 985026869374099456
+other_other_channel = 933253388978749460
  
 @client.event
 async def on_ready():
@@ -111,7 +112,7 @@ latest_twt = ''
 @tasks.loop(seconds=30)
 async def mirage_update():
     global latest_twt
-    channel = client.get_channel(other_channel_id)
+    channel = client.get_channel(other_other_channel)
     user='mirageau'
     tweets = api.user_timeline(screen_name=user, count=1, tweet_mode='extended')
 
