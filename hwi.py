@@ -131,7 +131,7 @@ async def mirage_update():
            
 
 #sends interval pictures of skz to specified channel
-@tasks.loop(hours=12)
+@tasks.loop(hours=5)
 async def daily():
     channel = client.get_channel(target_channel_id)
     await channel.send(file=discord.File("./skz\\" + random.choice(os.listdir("./skz"))))
