@@ -20,7 +20,6 @@ TWT_SEC = os.getenv("TWITTER_API_SECRET")
 ACC_TOK = os.getenv("ACCESS_TOKEN")
 ACC_SEC = os.getenv("ACCESS_TOKEN_SECRET")
 
-  
 auth = tw.OAuthHandler(TWT_KEY, TWT_SEC)
 auth.set_access_token(ACC_TOK, ACC_SEC)
 
