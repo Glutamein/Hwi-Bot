@@ -63,13 +63,12 @@ async def jop(ctx):
 #     session = AO3.Session(user, pwd)
 #     session.refresh_auth_token()
 
-
-    try:
-        user = session.get_user()
-        stat = user.get_stats()
-        await ctx.send(f'{user.name} has {user.works} works and {user.fandoms} fandoms')
-    except:
-        await ctx.send('user not found')
+    # try:
+    #     user = session.get_user()
+    #     stat = user.get_stats()
+    #     await ctx.send(f'{user.name} has {user.works} works and {user.fandoms} fandoms')
+    # except:
+    #     await ctx.send('user not found')
 
 #compability command
 @client.command(aliases=['comp', 'COMP', 'compare', 'COMPARE', 'COMPATIBILITY'], help='Compares two values compability level on a scale of 1-420')
