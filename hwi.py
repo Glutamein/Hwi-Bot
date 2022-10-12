@@ -1,4 +1,4 @@
-# bot.py
+# usr/bin/python3
 from ast import alias
 import os
 import random, glob
@@ -9,6 +9,13 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 import tweepy as tw
 from itertools import cycle
+
+from bs4 import BeautifulSoup
+import AO3
+
+import requests
+from requests.auth import HTTPBasicAuth
+
 
 load_dotenv()
 
@@ -42,6 +49,27 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send(f'pong \n{round(client.latency*1000)} ms')
     
+
+#JOP
+@client.command(help='WHEN WERE JUMPING AND HOPPING WERE JOPPING')
+async def jop(ctx):
+    await ctx.send(f'JOP HARDER')
+
+#ao3 command
+# @client.command(help='shows ao3 account stats')
+# async def ao3(ctx, pwd, user: discord.Member, *, message=None):
+#     message = 'log into you account'
+#     embed = discord.Embed(title = message)
+#     session = AO3.Session(user, pwd)
+#     session.refresh_auth_token()
+
+
+    try:
+        user = session.get_user()
+        stat = user.get_stats()
+        await ctx.send(f'{user.name} has {user.works} works and {user.fandoms} fandoms')
+    except:
+        await ctx.send('user not found')
 
 #compability command
 @client.command(aliases=['comp', 'COMP', 'compare', 'COMPARE', 'COMPATIBILITY'], help='Compares two values compability level on a scale of 1-420')
@@ -85,6 +113,12 @@ async def compliment(ctx, user):
     nice_phrases=[', ur doing amazing', '😊💕❤😍😎😉💋🌹🎉😘', '- keep up the good work!', 'I CODED THIS 4 U', ' love u m8 no homo bro (ok but all the homo tho)', 'u r actually the best', 'u are actually a blessing to this earth and the greatest to happen to creation since pockets', 'ur pretty neat', 'ur sexy keep it up']
     random.shuffle(nice_phrases)
     await ctx.send(f"{user} {nice_phrases[0]}")
+
+
+# @client.command(help='bully amu')
+# async def bully(ctx):
+#     make_fun_of=['code better','spend time on smth useful today','do better']
+#     await ctx.send(random.shuffle(make_fun_of))
 
 #image sending commands
 #windows syntax for files is: "./foldername\\" + random.choise(os.listdir("./foldername"))
@@ -151,7 +185,7 @@ async def on_command_error(ctx, error):
         await ctx.send('please type a valid command. Use **%help** to see all commands')
     elif isinstance(error, commands.BotMissingRole):
         await ctx.send(f'{error} Bot does not have valid roles assigned')
-    elif isinstance(error, commands.BotMissingPermissions | commands.MissingPermissions | commands.CommandInvokeError):
+    elif isinstance(error, commands.BotMissingPermissions | commands.CommandInvokeError):
         await ctx.send(f'{error} Invalid permissions. Please elevate permission and try again')
     elif isinstance(error, commands.CommandNotFound):
         await ctx.send(f'Not a valid command - {error}. Use the **%help** command to see all valid commands')
@@ -159,5 +193,5 @@ async def on_command_error(ctx, error):
         await ctx.send(f'{error} Please wait {error.retry_after:.2f} seconds before trying again')
        
 daily.start()
-mirage_update.start()
+# mirage_update.start()
 client.run(TOKEN)
