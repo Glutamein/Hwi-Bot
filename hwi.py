@@ -7,7 +7,7 @@ from discord.enums import Status
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
-import tweepy as tw
+
 from itertools import cycle
 
 from bs4 import BeautifulSoup
@@ -21,16 +21,10 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-# Twitter API authentication
-TWT_KEY = os.getenv("TWITTER_API_KEY")
-TWT_SEC = os.getenv("TWITTER_API_SECRET")
+
 ACC_TOK = os.getenv("ACCESS_TOKEN")
 ACC_SEC = os.getenv("ACCESS_TOKEN_SECRET")
 
-auth = tw.OAuthHandler(TWT_KEY, TWT_SEC)
-auth.set_access_token(ACC_TOK, ACC_SEC)
-
-api = tw.API(auth, wait_on_rate_limit=True)
 
 #bot prefix command
 client = commands.Bot(command_prefix='%')
@@ -139,27 +133,9 @@ async def pentapic(ctx):
 async def bunpic(ctx):
     await ctx.send(file=discord.File("./bunny\\" + random.choice(os.listdir("./bunny"))))
 
-latest_twt = ''
 
-#twt mirage update
-@tasks.loop(seconds=30)
-async def mirage_update():
-    global latest_twt
-    channel = client.get_channel(other_other_channel)
-    user='mirageau'
-    tweets = api.user_timeline(screen_name=user, count=1, tweet_mode='extended')
 
-    if latest_twt == '':
-        latest_twt = tweets[0].full_text
-        await channel.send(f"latest update: {tweets[0].full_text}")
-        return ''
-    else:  
-        if tweets[0].full_text == latest_twt:
-            return ''
-        else:
-            print(f'latest tweet is {latest_twt} and the new tweet is {tweets[0].full_text}')
-            latest_twt = tweets[0].full_text
-            await channel.send(f"newest update: {tweets[0].full_text}")
+
            
 
 #sends interval pictures of skz to specified channel
@@ -172,9 +148,6 @@ async def daily():
 async def before():
     await client.wait_until_ready()
 #
-@mirage_update.before_loop
-async def before():
-    await client.wait_until_ready()
 
 #error handling
 @client.event
